@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using Application.Interfaces;
+using Application.Interfaces.Services;
+using Application.Services;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +18,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
+builder.Services.AddScoped<IVenueService, VenueService>();
+builder.Services.AddScoped<IOrganizerService, OrganizerService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAttendeeService, AttendeeService>();
+
+builder.Services.AddProblemDetails();
+
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
