@@ -190,4 +190,51 @@ public class OrderService(IApplicationDbContext context) : IOrderService
                 .ExecuteUpdateAsync(s => s.SetProperty(t => t.SoldCount, t => t.SoldCount - count), ct);
         }
     }
+
+    public async Task<int> ExpirePendingOrdersAsync(CancellationToken ct = default)
+    {
+        var threshold = DateTime.UtcNow - PaymentWindow;
+
+        var ids = await context.Orders
+            .AsNoTracking()
+            .Where(o => o.Status == OrderStatus.Pending && o.CreatedAt < threshold)
+            .Select(o => o.Id)
+            .ToListAsync(ct);
+
+        var expired = 0;
+
+        foreach (var id in ids)
+        {
+            await using var tx = await context.Database.BeginTransactionAsync(ct);
+
+            var changed = await context.Orders
+                .Where(o => o.Id == id && o.Status == OrderStatus.Pending)
+                .ExecuteUpdateAsync(s => s.SetProperty(o => o.Status, OrderStatus.Expired), ct);
+
+            if (changed == 0)
+                continue;
+
+            var counts = await context.Tickets
+                .AsNoTracking()
+                .Where(t => t.OrderId == id)
+                .GroupBy(t => t.TicketTypeId)
+                .Select(g => new { TypeId = g.Key, Count = g.Count() })
+                .ToListAsync(ct);
+
+            foreach (var item in counts)
+            {
+                var typeId = item.TypeId;
+                var count = item.Count;
+
+                await context.TicketTypes
+                    .Where(t => t.Id == typeId)
+                    .ExecuteUpdateAsync(s => s.SetProperty(t => t.SoldCount, t => t.SoldCount - count), ct);
+            }
+
+            await tx.CommitAsync(ct);
+            expired++;
+        }
+
+        return expired;
+    }
 }

@@ -9,4 +9,5 @@ public interface IOrderService
     Task<ServiceStatusCode<OrderDTO>> GetByIdAsync(int id, CancellationToken ct = default);
     Task<ServiceStatusCode<OrderDTO>> PayAsync(int id, CancellationToken ct = default);
     Task<ServiceStatusCode<OrderDTO>> CancelAsync(int id, CancellationToken ct = default);
+    Task<int> ExpirePendingOrdersAsync(CancellationToken ct = default);
 }
