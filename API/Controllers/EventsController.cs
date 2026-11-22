@@ -3,12 +3,13 @@ using Application.DTOs.Events;
 using Application.DTOs.TicketTypes;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Application.DTOs.Reviews;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("events")]
-public class EventsController(IEventService service) : ControllerBase
+public class EventsController(IEventService service, IReviewService reviewService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] EventFilterDTO filter, CancellationToken ct)
@@ -41,4 +42,13 @@ public class EventsController(IEventService service) : ControllerBase
     [HttpPost("{id:int}/cancel")]
     public async Task<IActionResult> Cancel(int id, CancellationToken ct)
         => this.ToActionResult(await service.CancelAsync(id, ct));
+
+    [HttpGet("{id:int}/reviews")]
+    public async Task<IActionResult> GetReviews(
+    int id, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, CancellationToken ct = default)
+    => this.ToActionResult(await reviewService.GetByEventAsync(id, page, pageSize, ct));
+
+    [HttpPost("{id:int}/reviews")]
+    public async Task<IActionResult> AddReview(int id, ReviewCreateDTO dto, CancellationToken ct)
+        => this.ToActionResult(await reviewService.CreateAsync(id, dto, ct));
 }
