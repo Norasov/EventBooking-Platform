@@ -13,5 +13,11 @@ public class TicketTypeConfiguration:IEntityTypeConfiguration<TicketType>
         builder.HasOne(t => t.Event).WithMany(e => e.TicketTypes)
             .HasForeignKey(t => t.EventId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.ToTable(t =>
+        {
+            t.HasCheckConstraint("CK_TicketTypes_Quantity_NonNegative", "\"Quantity\" >= 0");
+            t.HasCheckConstraint("CK_TicketTypes_SoldCount_LessOrEqualQuantity", "\"SoldCount\" <= \"Quantity\"");
+        });
     }
 }

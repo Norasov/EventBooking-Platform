@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.Configurations;
 
-public class ReviewConfiguration:IEntityTypeConfiguration<Review>
+public class ReviewConfiguration : IEntityTypeConfiguration<Review>
 {
     public void Configure(EntityTypeBuilder<Review> builder)
     {
@@ -15,5 +15,7 @@ public class ReviewConfiguration:IEntityTypeConfiguration<Review>
         builder.HasOne(r => r.Attendee).WithMany(a => a.Reviews)
             .HasForeignKey(r => r.AttendeeId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(r => new { r.EventId, r.AttendeeId }).IsUnique();
     }
 }
