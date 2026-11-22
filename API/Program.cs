@@ -22,9 +22,10 @@ builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<IOrganizerService, OrganizerService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAttendeeService, AttendeeService>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddProblemDetails();
-
 
 var app = builder.Build();
 

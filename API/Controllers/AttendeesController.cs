@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("attendees")]
 public class AttendeesController(IAttendeeService service) : ControllerBase
 {
     [HttpPost]

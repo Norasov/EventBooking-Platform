@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("organizers")]
 public class OrganizersController(IOrganizerService service) : ControllerBase
 {
     [HttpPost]
