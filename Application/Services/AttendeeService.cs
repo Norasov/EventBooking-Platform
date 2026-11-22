@@ -42,6 +42,7 @@ public class AttendeeService(IApplicationDbContext context) : IAttendeeService
 
         var result = await context.Orders
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .Where(o => o.AttendeeId == attendeeId)
             .OrderByDescending(o => o.CreatedAt)
             .Select(OrderMappings.ToDtoExpression)
@@ -68,6 +69,7 @@ public class AttendeeService(IApplicationDbContext context) : IAttendeeService
 
         var tickets = await context.Tickets
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .Where(t => t.AttendeeId == attendeeId)
             .OrderByDescending(t => t.PurchasedAt)
             .Select(TicketMappings.ToDtoExpression)
