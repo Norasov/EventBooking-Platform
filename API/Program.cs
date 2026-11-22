@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using API.BackgroundServices;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using Application.Services;
@@ -27,6 +28,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+
+builder.Services.AddHostedService<OrderExpirationService>();
 
 builder.Services.AddProblemDetails();
 
